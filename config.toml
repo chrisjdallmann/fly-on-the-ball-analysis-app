@@ -1,9 +1,10 @@
 [startup]
 [dir]
-data_default = "D:/Data/Behavior/"
+data_default = "D:/Data/"
 training_data = "C:/Users/Chris/Desktop/fly-on-the-ball-CJD-2024-05-16/labeled-data/"
 config = "config.toml"
-[timestamps]
+[daq]
+name = "Dev1"
 sampling_rate = 5000
 [data_camera]
 names_cameras = ["camera_01", "camera_02"]
