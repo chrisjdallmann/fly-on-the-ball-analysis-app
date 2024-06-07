@@ -1,11 +1,12 @@
 [startup]
 [dir]
 data_default = "D:/Data/"
-training_data = "C:/Users/Chris/Desktop/fly-on-the-ball-CJD-2024-05-16/labeled-data/"
+training_data = "C:/Users/Chris/labeled-data/"
 config = "config.toml"
 [daq]
 name = "Dev1"
-sampling_rate = 5000
+sampling_rate = 5000.0
+channel_stimulus = "ai5"
 [data_camera]
 names_cameras = ["camera_01", "camera_02"]
 names_videos = ["camera_01", "camera_02"]
