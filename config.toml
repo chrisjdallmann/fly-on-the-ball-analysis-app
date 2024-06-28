@@ -1,28 +1,25 @@
 [startup]
 [dir]
-data_default = "D:/Data/"
-training_data = "C:/Users/Chris/labeled-data/"
+data_default = "D:/Data/Behavior/"
+deeplabcut_training_data = "C:/Users/Chris/Desktop/fly-on-the-ball-CJD-2024-05-16/labeled-data/"
 config = "config.toml"
 [daq]
 name = "Dev1"
 sampling_rate = 5000.0
 channel_stimulus = "ai5"
-[data_camera]
-names_cameras = ["camera_01", "camera_02"]
-names_videos = ["camera_01", "camera_02"]
-folder_videos = "/cameras/videos-raw/"
-folder_tracking = "/cameras/tracking/"
-names_leg_joints = ["A", "B", "C", "D", "E"]
-names_legs = ["L1", "L2", "L3", "R1", "R2", "R3"]
-[dlc_training]
-labels = ["antenna", "wing", "scutellum", "abdomen", "I1A", "I1B", "I1C", "I1D", "I1E", "I2A", "I2B", "I2C", "I2D", "I2E", "I3A", "I3B", "I3C", "I3D", "I3E", "C1B", "C1C", "C1D", "C1E", "C3B", "C3C", "C3D", "C3E"]
-[data_classification]
-[data_microscope]
-[data_electrophysiology]
+[camera]
+camera_names = ["camera_01", "camera_02"]
+camera_orientations = ["left", "right"]
+folder_videos = "/cameras/"
+[deeplabcut]
+model_name = "DLC_resnet50_fly-on-the-ballMay16shuffle1_3150000"
+keypoint_names = ["antenna", "wing", "scutellum", "abdomen", "I1A", "I1B", "I1C", "I1D", "I1E", "I2A", "I2B", "I2C", "I2D", "I2E", "I3A", "I3B", "I3C", "I3D", "I3E", "C1B", "C1C", "C1D", "C1E", "C3B", "C3C", "C3D", "C3E"]
+keypoint_indices = [[1,2], [4,5], [7,8], [10,11], [13,14], [16,17], [19,20], [22,23], [25,26], [28,29], [31,32], [34,35], [37,38], [40,41], [43,44], [46,47], [49,50], [52,53], [55,56], [58,59], [61,62], [64,65], [67,68], [70,71], [73,74], [76,77], [79,80]]
+keypoints_to_plot = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+[classification]
+[microscope]
+[electrophysiology]
 [display]
-legs = ["I1", "I2", "I3"]
-leg_joints = [1, 2, 3, 4, 5]
-leg_angles = ["L1C_flex"]
 play_speed_range = [1, 100]
 color_antenna = [0.5, 0.0, 1.0]
 color_wing = [0.4294117647058824, 0.11065268189150083, 0.9984636039674339]
@@ -55,3 +52,5 @@ pos_timestamps = [512.0, 469.0, 555.0, 180.0]
 pos_stimulus = [1078.0, 469.0, 555.0, 180.0] 
 pos_camera_01 = [1078.0, 788.0, 555.0, 324.0]
 pos_camera_02 = [512.0,  788.0,  555.0,  324.0]
+pos_camera_01_set_keypoints = [1078.0, 428.0, 555.0, 324.0]
+pos_camera_02_set_keypoints = [512.0,  428.0,  555.0,  324.0]
