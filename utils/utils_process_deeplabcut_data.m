@@ -1,6 +1,14 @@
 function camera_data = utils_process_deeplabcut_data(camera_data,config)
-%Utility function for fly_on_the_ball_analysis.mlapp
-%   Loads and filteres DeepLabCut data 
+% UTILS_PROCESS_DEEPLABCUT_DATA.m processes 2D tracking data from DeepLabCut 
+% 
+% Functions/toolboxes required:
+%   h5read.m
+
+% Author: Chris J. Dallmann
+% Affiliation: University of Wuerzburg
+% Last revision: 23-September-2024
+
+% ------------- BEGIN CODE ------------- 
 
 for iCamera = 1:numel(config.camera.camera_names)
     camera_name = config.camera.camera_names{iCamera};
@@ -35,6 +43,7 @@ for iCamera = 1:numel(config.camera.camera_names)
                 medfilt1(temp_camera_data(:,keypoint_indices));
         end
 
+        % Apply 
         % % Quick fix for video export
         % for iKeypoint = [2,3,5,10,15]
         %     keypoint_indices = double(app.config.deeplabcut.keypoint_indices{iKeypoint});
@@ -45,6 +54,48 @@ for iCamera = 1:numel(config.camera.camera_names)
         camera_data.(['data_',camera_name]) = temp_camera_data;
         camera_data.(['data_',camera_name,'_filtered']) = temp_camera_data_filtered;
 
+        % Calculate virtual leg features (leg vector between joints A and E) 
+        keypoints = {{'I1A','I1E'},{'I2A','I2E'},{'I3A','I3E'}};
+        for iLeg = 1:3
+            % Calculate leg vector
+            x_values = [];
+            y_values = [];
+            for iKeypoint = 1:numel(keypoints{iLeg})
+                keypoint_indices = double(config.deeplabcut.keypoint_indices{strcmp(keypoint_names,keypoints{iLeg}{iKeypoint})});
+                x_values(:,iKeypoint) = temp_camera_data_filtered(:,keypoint_indices(1));
+                y_values(:,iKeypoint) = temp_camera_data_filtered(:,keypoint_indices(2));
+            end
+            leg_vector = [x_values(:,2)-x_values(:,1), y_values(:,2)-y_values(:,1)];
+            leg_vector_video_position = [x_values(:,1), x_values(:,2), y_values(:,1), y_values(:,2)];
+
+            % Calculate angle relative to vertical 
+            reference_vector = repmat([0,1],size(leg_vector,1),1);
+            for iFrame = 1:size(leg_vector,1)
+                x1 = leg_vector(iFrame,1);
+                y1 = leg_vector(iFrame,2);
+                x2 = reference_vector(iFrame,1);
+                y2 = reference_vector(iFrame,2);
+                leg_vector_angle(iFrame,:) = atan2d(x1*y2-y1*x2,x1*x2+y1*y2);
+            end
+            
+            % Filter angle
+            leg_vector_angle = smooth(leg_vector_angle,5);
+            
+            % Calculate derivative
+            leg_vector_velocity = [0; diff(leg_vector_angle) ./ (1000/double(config.reference_sampling_rate))]; % deg/s
+    
+            camera_orientation = config.camera.camera_orientations{iCamera};
+            if strcmp(camera_orientation,'left')
+                label = 'L';
+            else
+                label = 'R';
+            end
+            camera_data.([label,num2str(iLeg),'_leg_vector']) = leg_vector;
+            camera_data.([label,num2str(iLeg),'_leg_vector_angle']) = leg_vector_angle;
+            camera_data.([label,num2str(iLeg),'_leg_vector_velocity']) = leg_vector_velocity;
+            camera_data.([label,num2str(iLeg),'_leg_vector_video_position']) = leg_vector_video_position;
+        
+        end
         clearvars h5_data temp_camera_data temp_camera_data_filtered
     end
     clearvars camera_name
