@@ -1,6 +1,11 @@
 function [time,camera_data,treadmill_data,stimulus_data] = utils_process_daq_data(daq_data,config)
-%Utility function for fly_on_the_ball_analysis.mlapp
-%   Downsamples DAQ data to reference sampling rate
+% UTILS_PROCESS_DAQ_DATA.m downsamples DAQ data to reference sampling rate 
+
+% Author: Chris J. Dallmann
+% Affiliation: University of Wuerzburg
+% Last revision: 23-September-2024
+
+% ------------- BEGIN CODE ------------- 
 
 x = 1:size(daq_data,1);
 xx = linspace(1,size(daq_data,1), ...

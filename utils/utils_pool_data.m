@@ -1,18 +1,30 @@
-% Pool data
+% UTILS_POOL_DATA.m calculates variables of interest per trial and pools them across trials and experiments 
 % 
-% Uses util functions from fly_on_the_ball_analysis.mlapp
+% Files required:
+%   fly-on-the-ball_data.csv
+% 
+% Functions/toolboxes required:
+%   utils_process_daq_data.m
+%   utils_process_treadmill_data.m
+%   toml Toolbox
+
+% Author: Chris J. Dallmann
+% Affiliation: University of Wuerzburg
+% Last revision: 23-September-2024
+
+% ------------- BEGIN CODE ------------- 
 
 clear, clc
 
 % Settings
-settings.genotype = ''; 
+settings.genotype = '';  
 settings.stimulus_pre_win = 300; % Frames
 settings.stimulus_post_win = 300; % Frames
 settings.treadmill = 1;
 settings.stimulus_duration = 1;
 settings.stimulus_intensity = 0;
-settings.resting = 0;
-settings.walking = 1;
+settings.resting = 1;
+settings.walking = 0;
 settings.FL_grooming = 0;
 
 % Load csv file with data overview
@@ -72,15 +84,16 @@ for iTrial = 1:n_trials
     end
 end
 
-figure
-imagesc(x_velocity')
-c = colorbar; 
-c.Label.String = 'Velocity (mm/s)'; 
-xlabel('Frames')
-ylabel('Trials')
-
-figure
-plot(mean(x_velocity,2))
-xlabel('Frames')
-ylabel('Velocity (mm/s)')
-set(gca,'Color','none')
+% figure
+% imagesc(x_velocity')
+% c = colorbar; 
+% c.Label.String = 'Velocity (mm/s)'; 
+% xlabel('Frames')
+% ylabel('Trials')
+% 
+% figure
+% plot(mean(x_velocity,2),'k')
+% xlabel('Frames')
+% ylabel('Velocity (mm/s)')
+% set(gca,'Color','none')
+% xlim([-60,660])
