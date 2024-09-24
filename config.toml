@@ -20,7 +20,7 @@ sampling_rate = 5000
 keypoint_indices = [[1, 2], [4, 5], [7, 8], [10, 11], [13, 14], [16, 17], [19, 20], [22, 23], [25, 26], [28, 29], [31, 32], [34, 35], [37, 38], [40, 41], [43, 44], [46, 47], [49, 50], [52, 53], [55, 56], [58, 59], [61, 62], [64, 65], [67, 68], [70, 71], [73, 74], [76, 77], [79, 80]]
 keypoint_names = ["antenna", "wing", "scutellum", "abdomen", "I1A", "I1B", "I1C", "I1D", "I1E", "I2A", "I2B", "I2C", "I2D", "I2E", "I3A", "I3B", "I3C", "I3D", "I3E", "C1B", "C1C", "C1D", "C1E", "C3B", "C3C", "C3D", "C3E"]
 keypoints_to_overlay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-keypoints_to_plot = [7, 8, 9, 12, 13, 14, 17, 18, 19]
+keypoint_indices_to_plot = [26, 41, 56]
 model_name = "DLC_resnet50_fly-on-the-ballMay16shuffle1_3150000"
 
 [dir]
