@@ -11,17 +11,17 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 23-September-2024
+% Last revision: 07-October-2024
 
 % ------------- BEGIN CODE ------------- 
 
 clear, clc
 
 % Set save path
-save_path = 'lstm_network_I3_swing_offset.mat';
+save_path = 'lstm_network_behavior.mat';
 
 % Load data
-load("training_data_I3_swing_offset.mat");
+load("training_data_behavior.mat");
 
 % Partition data into training and test
 n_observations = numel(data);
@@ -61,7 +61,7 @@ t_test = labels(idx_test);
 % Define LSTM network architecture
 n_channels = size(data{1},1); % Feature dimension
 n_hidden_units = 60;
-n_classes = 2; 
+n_classes = numel(unique(labels)); 
 
 layers = [
     sequenceInputLayer(n_channels)
