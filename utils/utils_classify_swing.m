@@ -6,7 +6,7 @@ function target_frames = utils_classify_swing(x,net)
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 23-September-2024
+% Last revision: 07-October-2024
 
 % ------------- BEGIN CODE ------------- 
 
@@ -17,13 +17,13 @@ target_score_threshold = 0.96;
 load(net);
 
 % Add padding to avoid edge artifacts
-x_padded = [x; zeros(sliding_window,1)];
+x_padded = [x, zeros(1,sliding_window)];
 
 % Slide over x to generate test data  
 x_test = {};
-for iWin = 1:size(x_padded,1)-sliding_window 
-    x_win = x_padded(iWin:iWin+sliding_window-1,:);
-    x_test{iWin,1} = x_win'; 
+for iWin = 1:size(x_padded,2)-sliding_window 
+    x_win = x_padded(:, iWin:iWin+sliding_window-1);
+    x_test{iWin,1} = x_win; 
 end
 
 % Classify data
