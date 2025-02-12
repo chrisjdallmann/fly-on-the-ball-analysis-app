@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 07-October-2024
+% Last revision: 12-February-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -25,7 +25,8 @@ disp('Preparing training data...')
 csv = readtable('training_frames_behavior.csv','Delimiter',',');
 n_sequences = length(csv.trial);
 
-save_path = 'training_data_behavior.mat';
+save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\utils\lstm_network\' ...
+    'training_data_behavior.mat'];
 pre_win = 20; %10; % Frames
 post_win = 19; %9; % Frames
 
@@ -66,7 +67,7 @@ for iSequence = 1:n_sequences
     camera_data = utils_process_deeplabcut_data(camera_data,config);
 
     % Prepare LSTM data
-    start_frame = csv.start_frame(iSequence);
+    frame = csv.frame(iSequence);
     camera_index = str2num(csv.camera{iSequence});
     leg_index = str2num(csv.leg{iSequence});
     feature = [];
@@ -79,7 +80,7 @@ for iSequence = 1:n_sequences
             label = 'R';
         end
         for iLeg = 1:numel(leg_index)
-            feature = [feature, camera_data.([label,num2str(iLeg),'_leg_vector_velocity'])(start_frame-pre_win : start_frame+post_win)];
+            feature = [feature, camera_data.([label,num2str(iLeg),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
         end
     end
 

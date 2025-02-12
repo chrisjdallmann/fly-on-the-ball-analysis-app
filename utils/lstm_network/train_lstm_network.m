@@ -11,14 +11,15 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 07-October-2024
+% Last revision: 12-February-2025
 
 % ------------- BEGIN CODE ------------- 
 
 clear, clc
 
 % Set save path
-save_path = 'lstm_network_behavior.mat';
+save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\' ...
+    'utils\lstm_network\lstm_network_behavior.mat'];
 
 % Load data
 load("training_data_behavior.mat");
