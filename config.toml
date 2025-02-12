@@ -18,16 +18,16 @@ sampling_rate = 5000
 
 [deeplabcut]
 keypoint_indices = [[1, 2], [4, 5], [7, 8], [10, 11], [13, 14], [16, 17], [19, 20], [22, 23], [25, 26], [28, 29], [31, 32], [34, 35], [37, 38], [40, 41], [43, 44], [46, 47], [49, 50], [52, 53], [55, 56], [58, 59], [61, 62], [64, 65], [67, 68], [70, 71], [73, 74], [76, 77], [79, 80]]
+keypoint_indices_to_plot = [26, 41, 56]
 keypoint_names = ["antenna", "wing", "scutellum", "abdomen", "I1A", "I1B", "I1C", "I1D", "I1E", "I2A", "I2B", "I2C", "I2D", "I2E", "I3A", "I3B", "I3C", "I3D", "I3E", "C1B", "C1C", "C1D", "C1E", "C3B", "C3C", "C3D", "C3E"]
 keypoints_to_overlay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-keypoint_indices_to_plot = [26, 41, 56]
-model_name = "DLC_resnet50_fly-on-the-ballMay16shuffle1_3150000"
+model_name = "DLC_resnet50_fly-on-the-ballMay16shuffle1_1030000"
 
 [dir]
+classification_data = "/cameras/"
 config = "config.toml"
 daq_data = "Z:/Data/fly-on-the-ball/"
 deeplabcut_training_data = "C:/Users/Chris/Desktop/fly-on-the-ball-CJD-2024-05-16/labeled-data/"
-classification_data = "/cameras/"
 
 [display]
 color_C1B = [0.91, 0.79, 0.44]
@@ -58,17 +58,17 @@ color_antenna = [0.5, 0.01, 0.99]
 color_scutellum = [0.35, 0.21, 0.99]
 color_wing = [0.5, 0.01, 0.99]
 play_speed_range = [1, 100]
-pos_behavior_classification = [710, 531, 555, 180]
+pos_behavior_classification = [34, 675, 555, 408]
 pos_camera_01 = [1175, 783, 555, 324]
 pos_camera_01_keypoints = [1176, 518, 555, 180]
 pos_camera_01_set_keypoints = [468, 170, 1050, 610]
 pos_camera_02 = [603, 783, 554, 324]
-pos_camera_02_keypoints = [591, 519, 555, 180]
+pos_camera_02_keypoints = [600, 519, 554, 180]
 pos_camera_02_set_keypoints = [468, 170, 1050, 610]
 pos_camera_frames = [512, 469, 555, 180]
 pos_stimulus = [592, 270, 555, 180]
-pos_swing_classification = [300, 300, 555, 180]
-pos_treadmill_path = [211, 270, 360, 325]
+pos_swing_classification = [187, 129, 555, 215]
+pos_treadmill_path = [218, 269, 360, 325]
 pos_treadmill_velocity = [1176, 114, 554, 334]
 
 [electrophysiology]
