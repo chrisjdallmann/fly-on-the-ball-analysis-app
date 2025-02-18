@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 12-February-2025
+% Last revision: 18-February-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -43,8 +43,9 @@ lstm_label = {};
 h = figure;
 
 % Loop over sequences
+n_sequence = 0;
 for iSequence = 1:n_sequences
-
+    
     % Set directory
     config.trial_name = csv.trial{iSequence};
     config.experiment = config.trial_name(1:end-4);
@@ -58,46 +59,57 @@ for iSequence = 1:n_sequences
     [time,camera_data,~,~] = utils_process_daq_data(daq_data,config);
     config.last_frame = length(time); % For utils_process_deeplabcut_data()
 
-    % Process DeepLabCut data
-    for iCamera = 1:numel(config.camera.camera_names)
-        camera_name = config.camera.camera_names{iCamera};
-        config.camera.(['is_',camera_name]) = true;
-        config.camera.(['is_data_',camera_name]) = true;
-    end
-    camera_data = utils_process_deeplabcut_data(camera_data,config);
-
-    % Prepare LSTM data
+    % Get frame
     frame = csv.frame(iSequence);
-    camera_index = str2num(csv.camera{iSequence});
-    leg_index = str2num(csv.leg{iSequence});
-    feature = [];
-    for iCamera = 1:numel(camera_index)
-        camera_name = config.camera.camera_names{camera_index(iCamera)};
-        camera_orientation = config.camera.camera_orientations{strcmp(config.camera.camera_names,camera_name)};
-        if strcmp(camera_orientation,'left')
-            label = 'L';
-        else
-            label = 'R';
+    if frame-pre_win <= 0
+        disp([config.trial_name, ': frame=', num2str(frame), ' is too small'])
+    elseif frame+post_win > config.last_frame
+        disp([config.trial_name, ': frame=', num2str(frame), ' is too large'])
+    else
+        
+        % Process DeepLabCut data
+        for iCamera = 1:numel(config.camera.camera_names)
+            camera_name = config.camera.camera_names{iCamera};
+            config.camera.(['is_',camera_name]) = true;
+            config.camera.(['is_data_',camera_name]) = true;
         end
-        for iLeg = 1:numel(leg_index)
-            feature = [feature, camera_data.([label,num2str(iLeg),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
+        camera_data = utils_process_deeplabcut_data(camera_data,config);
+    
+        % Prepare LSTM data
+        frame = csv.frame(iSequence);
+        camera_index = str2num(csv.camera{iSequence});
+        leg_index = str2num(csv.leg{iSequence});
+        feature = [];
+        for iCamera = 1:numel(camera_index)
+            camera_name = config.camera.camera_names{camera_index(iCamera)};
+            camera_orientation = config.camera.camera_orientations{strcmp(config.camera.camera_names,camera_name)};
+            if strcmp(camera_orientation,'left')
+                label = 'L';
+            else
+                label = 'R';
+            end
+            for iLeg = 1:numel(leg_index)
+                feature = [feature, camera_data.([label,num2str(iLeg),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
+            end
         end
+          
+        n_sequence = n_sequence+1;
+
+        % Prepare LSTM label
+        class_label = csv.class{n_sequence};
+    
+        % Store data and labels
+        lstm_data{n_sequence,1} = feature'; %[feature_1, feature_2]';
+        lstm_labels{n_sequence,1} = class_label;
+    
+        % Plot feature
+        figure(h), clf
+        plot(lstm_data{n_sequence}','k')
+        title(lstm_labels{n_sequence},'Interpreter','none')
+        xlabel('Frame')
+        ylabel('Feature')
+        set(gca,'Color','none')
     end
-
-    % Prepare LSTM label
-    class_label = csv.class{iSequence};
-
-    % Store data and labels
-    lstm_data{iSequence,1} = feature'; %[feature_1, feature_2]';
-    lstm_labels{iSequence,1} = class_label;
-
-    % Plot feature
-    figure(h), clf
-    plot(lstm_data{iSequence}','k')
-    title(lstm_labels{iSequence},'Interpreter','none')
-    xlabel('Frame')
-    ylabel('Feature')
-    set(gca,'Color','none')
 end
 
 % Save data and labels 
