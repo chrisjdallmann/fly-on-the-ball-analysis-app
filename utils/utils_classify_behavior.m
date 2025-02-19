@@ -1,4 +1,4 @@
-function target_frames = utils_classify_behavior(x,net)
+function target_frames = utils_classify_behavior(x,net,sliding_window)
 % UTILS_CLASSIFY_BEHAVIOR.m uses an LSTM network to identify patterns in time series data x
 % 
 % Functions/toolboxes required:
@@ -10,7 +10,7 @@ function target_frames = utils_classify_behavior(x,net)
 
 % ------------- BEGIN CODE ------------- 
 
-sliding_window = 40; % Same length as window used for training the network
+%sliding_window = 40; % Same length as window used for training the network
 target_score_threshold = 0.9;
 
 % Load LSTM network
