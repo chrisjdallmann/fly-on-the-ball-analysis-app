@@ -5,6 +5,8 @@ folder_videos = "/cameras/"
 sampling_rate = 300
 
 [classification]
+sliding_window_behavior = 40.0
+sliding_window_swing = 20.0
 
 [daq]
 channel_camera_01 = "ai0"
@@ -60,14 +62,14 @@ color_wing = [0.5, 0.01, 0.99]
 play_speed_range = [1, 100]
 pos_behavior_classification = [34, 675, 555, 408]
 pos_camera_01 = [1175, 783, 555, 324]
-pos_camera_01_keypoints = [1176, 518, 555, 180]
+pos_camera_01_keypoints = [1175, 434, 554, 278]
 pos_camera_01_set_keypoints = [468, 170, 1050, 610]
 pos_camera_02 = [603, 783, 554, 324]
-pos_camera_02_keypoints = [600, 519, 554, 180]
+pos_camera_02_keypoints = [603, 435, 554, 278]
 pos_camera_02_set_keypoints = [468, 170, 1050, 610]
 pos_camera_frames = [512, 469, 555, 180]
 pos_stimulus = [592, 270, 555, 180]
-pos_swing_classification = [187, 129, 555, 215]
+pos_swing_classification = [106, 130, 1426, 215]
 pos_treadmill_path = [218, 269, 360, 325]
 pos_treadmill_velocity = [1176, 114, 554, 334]
 
