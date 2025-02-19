@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 18-February-2025
+% Last revision: 19-February-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -27,8 +27,6 @@ n_sequences = length(csv.trial);
 
 save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\utils\lstm_network\' ...
     'training_data_behavior.mat'];
-pre_win = 20; %10; % Frames
-post_win = 19; %9; % Frames
 
 % Load config file
 path_config = 'config.toml';
@@ -36,6 +34,10 @@ config = toml.read(path_config);
 config = toml.map_to_struct(config);
 config.reference_sampling_rate = config.camera.sampling_rate;
 config.dir.data = config.dir.daq_data;   
+
+sliding_window = config.classification.sliding_window_behavior;
+pre_win = sliding_window/2; %20; %10; % Frames
+post_win = sliding_window/2-1; %19; %9; % Frames
 
 lstm_data = {};
 lstm_label = {};
