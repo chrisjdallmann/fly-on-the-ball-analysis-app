@@ -19,10 +19,10 @@ clear, clc
 
 % Set save path
 save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\' ...
-    'utils\lstm_network\lstm_network_behavior.mat'];
+    'utils\lstm_network\lstm_network_I3_swing_offset.mat'];
 
 % Load data
-load("training_data_behavior.mat");
+load("training_data_I3_swing_offset.mat");
 
 % Partition data into training and test
 n_observations = numel(data);

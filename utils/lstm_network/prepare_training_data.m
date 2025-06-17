@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 19-February-2025
+% Last revision: 21-February-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -22,11 +22,19 @@ clear, clc
 disp('Preparing training data...')
 
 % Load csv file with metadata and training frames  
-csv = readtable('training_frames_behavior.csv','Delimiter',',');
-n_sequences = length(csv.trial);
+data = readtable('training_frames_swing.csv','Delimiter',',');
 
 save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\utils\lstm_network\' ...
-    'training_data_behavior.mat'];
+    'training_data_I3_swing_offset.mat'];
+prepare_swing_data = true;
+sliding_window_name = 'sliding_window_swing';
+target_leg = '[3]';
+target_class = 'swing_offset';
+
+if prepare_swing_data
+   data = data(strcmp(data.leg,target_leg),:);
+   data.class(~strcmp(data.class,target_class)) = {'other'};
+end
 
 % Load config file
 path_config = 'config.toml';
@@ -35,7 +43,8 @@ config = toml.map_to_struct(config);
 config.reference_sampling_rate = config.camera.sampling_rate;
 config.dir.data = config.dir.daq_data;   
 
-sliding_window = config.classification.sliding_window_behavior;
+% Select sliding window
+sliding_window = config.classification.(sliding_window_name);
 pre_win = sliding_window/2; %20; %10; % Frames
 post_win = sliding_window/2-1; %19; %9; % Frames
 
@@ -45,11 +54,12 @@ lstm_label = {};
 h = figure;
 
 % Loop over sequences
+n_sequences = length(data.trial);
 n_sequence = 0;
 for iSequence = 1:n_sequences
     
     % Set directory
-    config.trial_name = csv.trial{iSequence};
+    config.trial_name = data.trial{iSequence};
     config.experiment = config.trial_name(1:end-4);
 
     % Load DAQ data
@@ -62,7 +72,7 @@ for iSequence = 1:n_sequences
     config.last_frame = length(time); % For utils_process_deeplabcut_data()
 
     % Get frame
-    frame = csv.frame(iSequence);
+    frame = data.frame(iSequence);
     if frame-pre_win <= 0
         disp([config.trial_name, ': frame=', num2str(frame), ' is too small'])
     elseif frame+post_win > config.last_frame
@@ -78,9 +88,9 @@ for iSequence = 1:n_sequences
         camera_data = utils_process_deeplabcut_data(camera_data,config);
     
         % Prepare LSTM data
-        frame = csv.frame(iSequence);
-        camera_index = str2num(csv.camera{iSequence});
-        leg_index = str2num(csv.leg{iSequence});
+        frame = data.frame(iSequence);
+        camera_index = str2num(data.camera{iSequence});
+        leg_index = str2num(data.leg{iSequence});
         feature = [];
         for iCamera = 1:numel(camera_index)
             camera_name = config.camera.camera_names{camera_index(iCamera)};
@@ -91,15 +101,15 @@ for iSequence = 1:n_sequences
                 label = 'R';
             end
             for iLeg = 1:numel(leg_index)
-                feature = [feature, camera_data.([label,num2str(iLeg),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
+                feature = [feature, camera_data.([label,num2str(leg_index(iLeg)),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
             end
         end
           
         n_sequence = n_sequence+1;
 
         % Prepare LSTM label
-        class_label = csv.class{n_sequence};
-    
+        class_label = data.class{n_sequence};
+        
         % Store data and labels
         lstm_data{n_sequence,1} = feature'; %[feature_1, feature_2]';
         lstm_labels{n_sequence,1} = class_label;
@@ -121,6 +131,23 @@ lstm.labels = categorical(lstm_labels);
 save(save_path,'-struct','lstm')
 
 disp('Done!')
+
+summary(lstm.labels)
+
+% Plot all sequences of a class
+figure
+hold on
+for i = 1:numel(lstm.labels)
+    if strcmp(lstm_labels(i),target_class)
+        plot(lstm_data{i}')
+    end
+end
+hold off
+xlabel('Frame')
+ylabel('Feature')
+ylim([-5,5])
+set(gca,'Color','none')
+
 
 % % Inspect LSTM data and labels
 % h = figure;
