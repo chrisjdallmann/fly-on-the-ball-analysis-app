@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 21-February-2025
+% Last revision: 08-September-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -26,10 +26,10 @@ data = readtable('training_frames_swing.csv','Delimiter',',');
 
 save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\utils\lstm_network\' ...
     'training_data_I3_swing_offset.mat'];
-prepare_swing_data = true;
-sliding_window_name = 'sliding_window_swing';
 target_leg = '[3]';
 target_class = 'swing_offset';
+prepare_swing_data = true;
+sliding_window_name = 'sliding_window_swing';
 
 if prepare_swing_data
    data = data(strcmp(data.leg,target_leg),:);
@@ -45,8 +45,8 @@ config.dir.data = config.dir.daq_data;
 
 % Select sliding window
 sliding_window = config.classification.(sliding_window_name);
-pre_win = sliding_window/2; %20; %10; % Frames
-post_win = sliding_window/2-1; %19; %9; % Frames
+pre_win = sliding_window/2; 
+post_win = sliding_window/2-1; 
 
 lstm_data = {};
 lstm_label = {};
@@ -77,8 +77,8 @@ for iSequence = 1:n_sequences
         disp([config.trial_name, ': frame=', num2str(frame), ' is too small'])
     elseif frame+post_win > config.last_frame
         disp([config.trial_name, ': frame=', num2str(frame), ' is too large'])
-    else
-        
+    
+    else   
         % Process DeepLabCut data
         for iCamera = 1:numel(config.camera.camera_names)
             camera_name = config.camera.camera_names{iCamera};
@@ -91,7 +91,8 @@ for iSequence = 1:n_sequences
         frame = data.frame(iSequence);
         camera_index = str2num(data.camera{iSequence});
         leg_index = str2num(data.leg{iSequence});
-        feature = [];
+        feature_1 = [];
+        feature_2 = [];
         for iCamera = 1:numel(camera_index)
             camera_name = config.camera.camera_names{camera_index(iCamera)};
             camera_orientation = config.camera.camera_orientations{strcmp(config.camera.camera_names,camera_name)};
@@ -101,7 +102,8 @@ for iSequence = 1:n_sequences
                 label = 'R';
             end
             for iLeg = 1:numel(leg_index)
-                feature = [feature, camera_data.([label,num2str(leg_index(iLeg)),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
+                feature_1 = [feature_1, camera_data.([label,num2str(leg_index(iLeg)),'_leg_vector_velocity'])(frame-pre_win : frame+post_win)];
+                feature_2 = [feature_2, camera_data.([label,num2str(leg_index(iLeg)),'E_y_velocity'])(frame-pre_win : frame+post_win)];
             end
         end
           
@@ -111,12 +113,13 @@ for iSequence = 1:n_sequences
         class_label = data.class{n_sequence};
         
         % Store data and labels
-        lstm_data{n_sequence,1} = feature'; %[feature_1, feature_2]';
+        lstm_data{n_sequence,1} = [feature_1, feature_2]'; %feature'; %[feature_1, feature_2]';
         lstm_labels{n_sequence,1} = class_label;
     
         % Plot feature
         figure(h), clf
-        plot(lstm_data{n_sequence}','k')
+        plot(lstm_data{n_sequence}')
+        legend({'Feature 1','Feature 2'})
         title(lstm_labels{n_sequence},'Interpreter','none')
         xlabel('Frame')
         ylabel('Feature')
