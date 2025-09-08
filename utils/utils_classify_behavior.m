@@ -6,7 +6,7 @@ function target_frames = utils_classify_behavior(x,net,sliding_window)
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 07-October-2024
+% Last revision: 08-September-2025
 
 % ------------- BEGIN CODE ------------- 
 
