@@ -11,18 +11,20 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 12-February-2025
+% Last revision: 08-September-2025
 
 % ------------- BEGIN CODE ------------- 
 
 clear, clc
 
+network_name = 'I3_swing_offset';
+
 % Set save path
 save_path = ['C:\Users\Chris\Documents\GitHub\fly-on-the-ball-analysis-app\' ...
-    'utils\lstm_network\lstm_network_I3_swing_offset.mat'];
+    'utils\lstm_network\',network_name,'_net.mat'];
 
 % Load data
-load("training_data_I3_swing_offset.mat");
+load(['training_data_',network_name,'.mat']);
 
 % Partition data into training and test
 n_observations = numel(data);
