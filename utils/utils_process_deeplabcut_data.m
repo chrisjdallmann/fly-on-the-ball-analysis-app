@@ -6,13 +6,21 @@ function camera_data = utils_process_deeplabcut_data(camera_data,config)
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 23-September-2024
+% Last revision: 08-September-2025
 
 % ------------- BEGIN CODE ------------- 
 
 for iCamera = 1:numel(config.camera.camera_names)
     camera_name = config.camera.camera_names{iCamera};
     if config.camera.(['is_data_',camera_name])
+        % Get camera orientation
+        camera_orientation = config.camera.camera_orientations{iCamera};
+        if strcmp(camera_orientation,'left')
+            label = 'L';
+        else
+            label = 'R';
+        end
+
         % Load data
         h5_data = h5read( ...
             [config.dir.data, ...
@@ -43,16 +51,29 @@ for iCamera = 1:numel(config.camera.camera_names)
                 medfilt1(temp_camera_data(:,keypoint_indices));
         end
 
-        % Apply 
-        % % Quick fix for video export
-        % for iKeypoint = [2,3,5,10,15]
-        %     keypoint_indices = double(app.config.deeplabcut.keypoint_indices{iKeypoint});
-        %     temp_camera_data_filtered(:,keypoint_indices) = ...
-        %         repmat(mean(temp_camera_data_filtered(:,keypoint_indices)),size(temp_camera_data_filtered,1),1);
-        % end
-
         camera_data.(['data_',camera_name]) = temp_camera_data;
         camera_data.(['data_',camera_name,'_filtered']) = temp_camera_data_filtered;
+
+        % Get vertical position of reference point (wing)
+        keypoint_indices = double(config.deeplabcut.keypoint_indices{strcmp(keypoint_names,'wing')});
+        y_reference = mean(temp_camera_data_filtered(:,keypoint_indices(2)));
+                    
+        % Calculate velocity of tarsus y-position relative to wing 
+        keypoints = {'I1E','I2E','I3E'};
+        for iLeg = 1:3
+            keypoint_indices = double(config.deeplabcut.keypoint_indices{strcmp(keypoint_names,keypoints{iLeg})});
+            y_position = temp_camera_data_filtered(:,keypoint_indices(2));
+            y_position = y_position-y_reference;
+            
+            y_velocity = [0; diff(y_position) ./ (1000/double(config.reference_sampling_rate))]; % px/s
+            
+            % Smooth velocity
+            win_size = 0.01; % s
+            y_velocity = smooth(y_velocity, win_size*double(config.reference_sampling_rate));
+
+            % Store data
+            camera_data.([label,num2str(iLeg),'E_y_velocity']) = y_velocity;
+        end
 
         % Calculate virtual leg features (leg vector between joints A and E) 
         keypoints = {{'I1A','I1E'},{'I2A','I2E'},{'I3A','I3E'}};
@@ -84,17 +105,11 @@ for iCamera = 1:numel(config.camera.camera_names)
             % Calculate derivative
             leg_vector_velocity = [0; diff(leg_vector_angle) ./ (1000/double(config.reference_sampling_rate))]; % deg/s
     
-            camera_orientation = config.camera.camera_orientations{iCamera};
-            if strcmp(camera_orientation,'left')
-                label = 'L';
-            else
-                label = 'R';
-            end
+            % Store data
             camera_data.([label,num2str(iLeg),'_leg_vector']) = leg_vector;
             camera_data.([label,num2str(iLeg),'_leg_vector_angle']) = leg_vector_angle;
             camera_data.([label,num2str(iLeg),'_leg_vector_velocity']) = leg_vector_velocity;
             camera_data.([label,num2str(iLeg),'_leg_vector_video_position']) = leg_vector_video_position;
-        
         end
         clearvars h5_data temp_camera_data temp_camera_data_filtered
     end
