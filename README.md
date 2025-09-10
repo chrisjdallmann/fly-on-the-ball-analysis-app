@@ -7,4 +7,4 @@ This is work in progress. Currently, users can play recorded behavioral videos a
 <img src="./image.png" alt="App overview" width="400">
 
 ## Requirements 
-The code was tested on Windows 11 with MATLAB R2023a. It requires the packages [matlab-toml](https://www.mathworks.com/matlabcentral/fileexchange/67858-matlab-toml) and [export_fig](https://www.mathworks.com/matlabcentral/fileexchange/23629-export_fig) in the MATLAB path. Using the LSTM networks requires Matlab's Deep Learning Toolbox.
+The code was tested on Windows 11 with MATLAB R2023a. Using the LSTM networks requires Matlab's Deep Learning Toolbox, and [matlab-toml](https://www.mathworks.com/matlabcentral/fileexchange/67858-matlab-toml) and [export_fig](https://www.mathworks.com/matlabcentral/fileexchange/23629-export_fig) must be added to the MATLAB path. 
