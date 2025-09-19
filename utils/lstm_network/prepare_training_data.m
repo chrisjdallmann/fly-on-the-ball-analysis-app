@@ -13,7 +13,7 @@
 
 % Author: Chris J. Dallmann
 % Affiliation: University of Wuerzburg
-% Last revision: 08-September-2025
+% Last revision: 19-September-2025
 
 % ------------- BEGIN CODE ------------- 
 
@@ -30,6 +30,7 @@ target_leg = '[3]';
 target_class = 'swing_offset';
 prepare_swing_data = true;
 sliding_window_name = 'sliding_window_swing';
+plot_data = false;
 
 if prepare_swing_data
    data = data(strcmp(data.leg,target_leg),:);
@@ -51,7 +52,9 @@ post_win = sliding_window/2-1;
 lstm_data = {};
 lstm_label = {};
 
-h = figure;
+if plot_data
+    h = figure;
+end
 
 % Loop over sequences
 n_sequences = length(data.trial);
@@ -117,13 +120,15 @@ for iSequence = 1:n_sequences
         lstm_labels{n_sequence,1} = class_label;
     
         % Plot feature
-        figure(h), clf
-        plot(lstm_data{n_sequence}')
-        legend({'Feature 1','Feature 2'})
-        title(lstm_labels{n_sequence},'Interpreter','none')
-        xlabel('Frame')
-        ylabel('Feature')
-        set(gca,'Color','none')
+        if plot_data
+            figure(h), clf
+            plot(lstm_data{n_sequence}')
+            legend({'Feature 1','Feature 2'})
+            title(lstm_labels{n_sequence},'Interpreter','none')
+            xlabel('Frame')
+            ylabel('Feature')
+            set(gca,'Color','none')
+        end
     end
 end
 
@@ -138,18 +143,20 @@ disp('Done!')
 summary(lstm.labels)
 
 % Plot all sequences of a class
-figure
-hold on
-for i = 1:numel(lstm.labels)
-    if strcmp(lstm_labels(i),target_class)
-        plot(lstm_data{i}')
+if plot_data
+    figure
+    hold on
+    for i = 1:numel(lstm.labels)
+        if strcmp(lstm_labels(i),target_class)
+            plot(lstm_data{i}')
+        end
     end
+    hold off
+    xlabel('Frame')
+    ylabel('Feature')
+    ylim([-5,5])
+    set(gca,'Color','none')
 end
-hold off
-xlabel('Frame')
-ylabel('Feature')
-ylim([-5,5])
-set(gca,'Color','none')
 
 
 % % Inspect LSTM data and labels
