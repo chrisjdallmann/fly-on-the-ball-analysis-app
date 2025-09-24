@@ -90,4 +90,18 @@ treadmill_data.heading = spline(x,path(:,1),xx);
 treadmill_data.x_path = spline(x,path(:,2),xx);
 treadmill_data.y_path = spline(x,path(:,3),xx);
 
+% Translational speed
+treadmill_data.xy_speed = abs(treadmill_data.x_velocity) + abs(treadmill_data.y_velocity);
+
+% Rotational speed
+treadmill_data.z_speed = abs(treadmill_data.z_velocity);
+
+% Smooth velocities and speed
+window = 0.1; % s
+treadmill_data.x_velocity_smoothed = smooth(treadmill_data.x_velocity, window*double(config.reference_sampling_rate));
+treadmill_data.y_velocity_smoothed = smooth(treadmill_data.y_velocity, window*double(config.reference_sampling_rate));
+treadmill_data.z_velocity_smoothed = smooth(treadmill_data.z_velocity, window*double(config.reference_sampling_rate));
+treadmill_data.xy_speed_smoothed = smooth(treadmill_data.xy_speed, window*double(config.reference_sampling_rate));
+treadmill_data.z_speed_smoothed = smooth(treadmill_data.z_speed, window*double(config.reference_sampling_rate));
+
 end
